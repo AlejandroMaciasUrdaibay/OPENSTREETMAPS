@@ -2,7 +2,7 @@
 const supabaseUrl = 'https://cwfphtmfjdkmxfgcnzqn.supabase.co';
 const supabaseKey = '';"sb_publishable_dzJCdUmHzy_WORkHRzFM8w_OSaHvVYF"
 console.log('supabase available:', typeof window.supabase);
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 console.log('Supabase initialized:', supabase);
 
 // Initialize the map
@@ -27,6 +27,7 @@ async function saveMarker(lat, lng) {
         console.log('Marker saved:', data);
     }
 }
+
 
 // Function to load markers
 async function loadMarkers() {
