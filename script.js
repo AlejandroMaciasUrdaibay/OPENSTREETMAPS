@@ -16,9 +16,11 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 // Function to save marker
 async function saveMarker(lat, lng) {
     console.log('Saving marker:', lat, lng);
+    // Cambiamos 'markers' por 'Places'
     const { data, error } = await supabase
-        .from('markers')
-        .insert([{ lat, lng }]);
+        .from('Places') 
+        .insert([{ lat, lng }]); 
+
     if (error) {
         console.error('Error saving marker:', error);
     } else {
