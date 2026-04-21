@@ -77,18 +77,28 @@ async function updateMarker(id, name) {
     }
 }
 
-// 5. Evento: Al hacer clic en el mapa
-map.on('click', function(e) {
+// 6. Evento: Al hacer clic en el mapa
+map.on('click', async function(e) {
     const lat = e.latlng.lat;
     const lng = e.latlng.lng;
 
-    // Colocamos el marcador visualmente de inmediato
-    L.marker([lat, lng]).addTo(map)
-        .bindPopup("Punto guardado")
-        .openPopup();
-
-    // Lo enviamos a Supabase para que sea permanente
-    saveMarker(lat, lng);
+    // Primero guardamos en Supabase para obtener el ID
+    const id = await saveMarker(lat, lng);
+    if (id) {
+        // Colocamos el marcador visualmente con popup editable
+        const marker = L.marker([lat, lng]).addTo(map)
+            .bindPopup('Taller');
+        marker.markerId = id;
+        marker.on('click', function() {
+            const currentName = this.getPopup().getContent();
+            const newName = prompt('Editar nombre del marcador:', currentName);
+            if (newName && newName !== currentName) {
+                this.setPopupContent(newName);
+                updateMarker(this.markerId, newName);
+            }
+        });
+        marker.openPopup();
+    }
 });
 
 // 6. Ejecución inicial
