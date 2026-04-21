@@ -1,16 +1,19 @@
-// Initialize Supabase
-const supabaseUrl = 'https://cwfphtmfjdkmxfgcnzqn.supabase.co';
-const supabaseKey = '';"sb_publishable_dzJCdUmHzy_WORkHRzFM8w_OSaHvVYF"
-console.log('supabase available:', typeof window.supabase);
-const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
-console.log('Supabase initialized:', supabase);
+// 1. Configuración de credenciales
+const url = 'https://cwfphtmfjdkmxfgcnzqn.supabase.co';
+const key = 'sb_publishable_dzJCdUmHzy_WORKHRzFM8w_OSaHvVYF';
 
-// Initialize the map
-var map = L.map('map').setView([25.592305, -103.461611], 13); // Coordinates provided by user
+// 2. Creación del cliente (Usamos nombres de variables distintos para evitar conflictos)
+const supabaseClient = window.supabase.createClient(url, key);
 
-// Add OpenStreetMap tiles
+// 3. Verificación en consola (Para estar seguros de que cargó)
+console.log('Cliente de Supabase creado:', supabaseClient);
+
+// 4. Inicialización del mapa
+// IMPORTANTE: Asegúrate de que el div con id="map" tenga altura en tu CSS
+var map = L.map('map').setView([25.592305, -103.461611], 13);
+
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
 
 // Function to save marker
