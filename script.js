@@ -18,7 +18,7 @@ async function loadMarkers() {
     console.log("Consultando marcadores existentes...");
     const { data, error } = await supabaseClient
         .from('Places') // Tu tabla se llama Places
-        .select('*');
+        .select('id, lat, lng, name');
 
     if (error) {
         console.error("Error al cargar desde Supabase:", error);
@@ -27,7 +27,17 @@ async function loadMarkers() {
         if (data) {
             data.forEach(punto => {
                 // Dibujamos cada punto guardado en el mapa
-                L.marker([punto.lat, punto.lng]).addTo(map);
+                const marker = L.marker([punto.lat, punto.lng]).addTo(map)
+                    .bindPopup(punto.name || 'Taller');
+                marker.markerId = punto.id;
+                marker.on('click', function() {
+                    const currentName = this.getPopup().getContent();
+                    const newName = prompt('Editar nombre del marcador:', currentName);
+                    if (newName && newName !== currentName) {
+                        this.setPopupContent(newName);
+                        updateMarker(this.markerId, newName);
+                    }
+                });
             });
         }
     }
@@ -38,13 +48,32 @@ async function saveMarker(lat, lng) {
     console.log("Guardando en Supabase...", lat, lng);
     const { data, error } = await supabaseClient
         .from('Places')
-        .insert([{ lat: lat, lng: lng }]);
+        .insert([{ lat: lat, lng: lng, name: 'Taller' }])
+        .select('id');
 
     if (error) {
         console.error("Error al insertar en la tabla:", error.message);
         alert("Error al guardar: " + error.message);
+        return null;
     } else {
-        console.log("¡Éxito! Guardado correctamente.");
+        console.log("¡Éxito! Guardado correctamente.", data);
+        return data[0].id;
+    }
+}
+
+// 5. Función para ACTUALIZAR el nombre de un marcador
+async function updateMarker(id, name) {
+    console.log("Actualizando marcador...", id, name);
+    const { error } = await supabaseClient
+        .from('Places')
+        .update({ name: name })
+        .eq('id', id);
+
+    if (error) {
+        console.error("Error al actualizar:", error.message);
+        alert("Error al actualizar: " + error.message);
+    } else {
+        console.log("Nombre actualizado correctamente.");
     }
 }
 
